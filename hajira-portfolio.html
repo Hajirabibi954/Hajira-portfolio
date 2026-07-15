@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hajira Bibi — Data Science &amp; Storytelling</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,500;1,9..144,600&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ivory:#FBF5F2;
+    --ivory-2:#F4E9E6;
+    --ink:#2B2230;
+    --ink-soft:#5C4E58;
+    --rose:#C9788B;
+    --rose-deep:#B15D74;
+    --wine:#7A2E42;
+    --gold:#C9A84C;
+    --card:#FFFFFF;
+    --line: rgba(122,46,66,0.14);
+    --shadow: 0 20px 40px -24px rgba(122,46,66,0.25);
+    --radius: 22px;
+  }
+
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;
+    background:var(--ivory);
+    color:var(--ink);
+    font-family:'Inter', sans-serif;
+    line-height:1.6;
+    overflow-x:hidden;
+  }
+  ::selection{ background:var(--rose); color:#fff; }
+
+  .mono{ font-family:'IBM Plex Mono', monospace; letter-spacing:0.04em; }
+  h1,h2,h3,.serif{ font-family:'Fraunces', serif; }
+  em{ font-style:italic; color:var(--wine); }
+
+  a{ color:inherit; }
+
+  /* ambient background blobs */
+  .blob{
+    position:fixed; border-radius:50%; filter:blur(60px); z-index:-1; opacity:0.35;
+  }
+  .blob-1{ width:420px; height:420px; background:var(--rose); top:-140px; right:-140px; }
+  .blob-2{ width:380px; height:380px; background:var(--gold); bottom:-160px; left:-120px; opacity:0.18; }
+
+  /* NAV */
+  nav{
+    position:fixed; top:0; left:0; right:0; z-index:50;
+    display:flex; align-items:center; justify-content:space-between;
+    padding:18px 6vw;
+    background:rgba(251,245,242,0.78);
+    backdrop-filter:blur(10px);
+    border-bottom:1px solid var(--line);
+  }
+  .nav-mark{ font-family:'Fraunces', serif; font-weight:600; font-size:1.05rem; }
+  .nav-mark span{ color:var(--rose-deep); }
+  .nav-links{ display:flex; gap:28px; list-style:none; margin:0; padding:0; }
+  .nav-links a{
+    text-decoration:none; font-size:0.82rem; text-transform:uppercase;
+    letter-spacing:0.08em; color:var(--ink-soft); font-weight:500;
+    padding-bottom:3px; border-bottom:1px solid transparent; transition:all .2s ease;
+  }
+  .nav-links a:hover{ color:var(--wine); border-bottom-color:var(--wine); }
+  .nav-toggle{ display:none; }
+
+  section{ padding:120px 6vw 90px; max-width:1180px; margin:0 auto; position:relative; }
+
+  /* eyebrow labels — mono tags used as section signposts, not fake numbering */
+  .eyebrow{
+    display:inline-flex; align-items:center; gap:8px;
+    font-size:0.72rem; text-transform:uppercase; color:var(--wine);
+    margin-bottom:14px;
+  }
+  .eyebrow::before{
+    content:''; width:26px; height:1px; background:var(--wine);
+  }
+
+  /* ---------- HERO ---------- */
+  #hero{
+    min-height:100vh; display:flex; align-items:center; padding-top:90px;
+  }
+  .hero-grid{
+    display:grid; grid-template-columns:1.25fr 0.9fr; gap:60px; align-items:center; width:100%;
+  }
+  .hero-eyebrow{ font-size:0.8rem; color:var(--ink-soft); margin-bottom:18px; display:flex; align-items:center; gap:10px;}
+  .status-dot{ width:8px; height:8px; border-radius:50%; background:#5c9a6a; box-shadow:0 0 0 4px rgba(92,154,106,0.18); }
+  h1.hero-title{
+    font-size:clamp(2.8rem, 6vw, 4.6rem); line-height:1.02; font-weight:600;
+    margin:0 0 22px;
+  }
+  .swipe-wrap{ position:relative; display:inline-block; }
+  .swipe{ position:absolute; left:-2%; bottom:6px; width:104%; height:14px; z-index:-1; }
+  .swipe path{ stroke:var(--rose); stroke-width:10; fill:none; opacity:0.55; }
+
+  .hero-lede{
+    font-size:1.08rem; color:var(--ink-soft); max-width:520px; margin-bottom:34px;
+  }
+  .hero-cta{ display:flex; gap:14px; flex-wrap:wrap; }
+  .btn{
+    padding:13px 26px; border-radius:100px; font-weight:600; font-size:0.9rem;
+    text-decoration:none; display:inline-flex; align-items:center; gap:8px;
+    transition:transform .2s ease, box-shadow .2s ease;
+  }
+  .btn-solid{ background:var(--wine); color:#fff; box-shadow:0 12px 24px -10px rgba(122,46,66,0.5); }
+  .btn-solid:hover{ transform:translateY(-2px); }
+  .btn-ghost{ border:1.5px solid var(--line); color:var(--ink); }
+  .btn-ghost:hover{ border-color:var(--wine); color:var(--wine); }
+
+  /* compact-mirror stat panel — the signature element */
+  .compact{
+    background:linear-gradient(160deg, #fff, var(--ivory-2));
+    border-radius:28px;
+    border:1px solid var(--line);
+    box-shadow:var(--shadow);
+    padding:34px 28px 28px;
+    position:relative;
+  }
+  .compact::before{
+    content:''; position:absolute; top:-13px; left:50%; transform:translateX(-50%);
+    width:56px; height:26px; background:var(--gold); border-radius:0 0 40px 40px;
+    box-shadow:0 4px 10px rgba(201,168,76,0.5);
+  }
+  .compact-title{
+    font-family:'IBM Plex Mono'; font-size:0.68rem; text-transform:uppercase;
+    letter-spacing:0.1em; color:var(--ink-soft); text-align:center; margin-bottom:20px;
+  }
+  .swatches{ display:grid; grid-template-columns:1fr 1fr; gap:14px; }
+  .swatch{
+    background:#fff; border-radius:16px; padding:16px 14px; text-align:center;
+    border:1px solid var(--line);
+  }
+  .swatch .num{ font-family:'Fraunces'; font-weight:600; font-size:1.5rem; color:var(--wine); display:block; }
+  .swatch .lbl{ font-size:0.72rem; color:var(--ink-soft); margin-top:4px; display:block; }
+  .swatch:nth-child(1){ background:var(--rose); }
+  .swatch:nth-child(1) .num, .swatch:nth-child(1) .lbl{ color:#fff; }
+
+  /* ---------- ABOUT ---------- */
+  .about-grid{ display:grid; grid-template-columns:1fr 1fr; gap:50px; align-items:start; }
+  .about-grid p{ color:var(--ink-soft); font-size:1.02rem; margin-bottom:18px; }
+  .edu-card{
+    background:var(--card); border:1px solid var(--line); border-radius:var(--radius);
+    padding:26px 28px; box-shadow:var(--shadow);
+  }
+  .edu-card + .edu-card{ margin-top:16px; }
+  .edu-card .school{ font-family:'Fraunces'; font-weight:600; font-size:1.1rem; margin-bottom:4px; }
+  .edu-card .meta{ font-size:0.8rem; color:var(--ink-soft); }
+
+  /* ---------- SKILLS ---------- */
+  .skills-grid{ display:grid; grid-template-columns:repeat(3, 1fr); gap:20px; }
+  .skill-card{
+    background:var(--card); border-radius:var(--radius); padding:24px;
+    border:1px solid var(--line); box-shadow:var(--shadow);
+  }
+  .skill-card h3{ font-size:1.02rem; margin:0 0 14px; font-weight:600; }
+  .chips{ display:flex; flex-wrap:wrap; gap:8px; }
+  .chip{
+    font-family:'IBM Plex Mono'; font-size:0.72rem; padding:6px 12px;
+    background:var(--ivory-2); border-radius:100px; color:var(--wine);
+    border:1px solid var(--line);
+  }
+
+  /* ---------- EXPERIENCE TIMELINE ---------- */
+  .timeline{ position:relative; padding-left:32px; }
+  .timeline::before{
+    content:''; position:absolute; left:5px; top:6px; bottom:6px; width:2px;
+    background:linear-gradient(var(--rose), var(--gold));
+  }
+  .t-item{ position:relative; padding-bottom:36px; }
+  .t-item:last-child{ padding-bottom:0; }
+  .t-item::before{
+    content:''; position:absolute; left:-32px; top:5px; width:12px; height:12px;
+    border-radius:50%; background:var(--wine); border:3px solid var(--ivory);
+    box-shadow:0 0 0 2px var(--rose);
+  }
+  .t-role{ font-family:'Fraunces'; font-weight:600; font-size:1.15rem; margin:0; }
+  .t-org{ color:var(--wine); font-size:0.92rem; font-weight:500; }
+  .t-year{ font-family:'IBM Plex Mono'; font-size:0.72rem; color:var(--ink-soft); float:right; }
+  .t-desc{ color:var(--ink-soft); font-size:0.94rem; margin-top:6px; max-width:640px; }
+
+  /* ---------- PROJECTS ---------- */
+  .proj-grid{ display:grid; grid-template-columns:repeat(2, 1fr); gap:22px; }
+  .proj-card{
+    background:var(--card); border-radius:var(--radius); padding:26px;
+    border:1px solid var(--line); box-shadow:var(--shadow);
+    position:relative; overflow:hidden; transition:transform .25s ease, border-color .25s ease;
+  }
+  .proj-card:hover{ transform:translateY(-4px); border-color:var(--gold); }
+  .proj-card::after{
+    content:''; position:absolute; top:0; right:0; width:0; height:0;
+    border-style:solid; border-width:0 34px 34px 0; border-color:transparent var(--ivory-2) transparent transparent;
+  }
+  .proj-year{ font-family:'IBM Plex Mono'; font-size:0.68rem; color:var(--ink-soft); }
+  .proj-title{ font-family:'Fraunces'; font-weight:600; font-size:1.22rem; margin:6px 0 10px; }
+  .proj-title em{ font-style:italic; }
+  .proj-desc{ color:var(--ink-soft); font-size:0.93rem; margin-bottom:14px; }
+  .proj-card.featured{ grid-column: span 2; }
+  .proj-card.featured .proj-desc{ max-width:640px; }
+
+  /* ---------- ACHIEVEMENTS ---------- */
+  .ach-grid{ display:grid; grid-template-columns:repeat(3,1fr); gap:20px; }
+  .ach-card{
+    background:linear-gradient(160deg, var(--wine), #5c1f30);
+    color:#fff; border-radius:var(--radius); padding:26px; box-shadow:var(--shadow);
+  }
+  .ach-card .ach-tag{ font-family:'IBM Plex Mono'; font-size:0.68rem; opacity:0.75; text-transform:uppercase; }
+  .ach-card h3{ font-family:'Fraunces'; font-size:1.1rem; margin:8px 0 8px; }
+  .ach-card p{ font-size:0.87rem; opacity:0.9; margin:0; }
+
+  /* ---------- CONTACT ---------- */
+  #contact{ text-align:center; padding-bottom:70px; }
+  #contact h2{ font-size:clamp(2rem, 4vw, 3rem); margin-bottom:14px; }
+  #contact p{ color:var(--ink-soft); max-width:480px; margin:0 auto 30px; }
+  .contact-btns{ display:flex; gap:16px; justify-content:center; flex-wrap:wrap; }
+
+  footer{
+    text-align:center; padding:26px 6vw; font-size:0.78rem; color:var(--ink-soft);
+    border-top:1px solid var(--line);
+  }
+
+  .reveal{ opacity:0; transform:translateY(24px); transition:opacity .7s ease, transform .7s ease; }
+  .reveal.in{ opacity:1; transform:none; }
+
+  /* ---------- RESPONSIVE ---------- */
+  @media (max-width: 880px){
+    .hero-grid, .about-grid{ grid-template-columns:1fr; }
+    .skills-grid{ grid-template-columns:repeat(2,1fr); }
+    .proj-grid{ grid-template-columns:1fr; }
+    .proj-card.featured{ grid-column:span 1; }
+    .ach-grid{ grid-template-columns:1fr; }
+    .nav-links{ display:none; }
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    *{ transition:none !important; scroll-behavior:auto !important; }
+    .reveal{ opacity:1; transform:none; }
+  }
+
+  a:focus-visible, button:focus-visible{ outline:2px solid var(--wine); outline-offset:3px; }
+</style>
+</head>
+<body>
+
+<div class="blob blob-1"></div>
+<div class="blob blob-2"></div>
+
+<nav>
+  <div class="nav-mark">Hajira<span>.</span>Bibi</div>
+  <ul class="nav-links">
+    <li><a href="#about">About</a></li>
+    <li><a href="#skills">Skills</a></li>
+    <li><a href="#experience">Experience</a></li>
+    <li><a href="#projects">Projects</a></li>
+    <li><a href="#achievements">Achievements</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+</nav>
+
+<section id="hero">
+  <div class="hero-grid">
+    <div>
+      <div class="hero-eyebrow"><span class="status-dot"></span> currently AI/ML interning at D-Tech &amp; Consultancy, Islamabad</div>
+      <h1 class="hero-title">
+        <span class="swipe-wrap">Hajira Bibi
+          <svg class="swipe" viewBox="0 0 400 20" preserveAspectRatio="none"><path d="M2 12 C 100 2, 300 18, 398 8"/></svg>
+        </span><br>
+        turns messy data into <em>things people actually read.</em>
+      </h1>
+      <p class="hero-lede">
+        I'm a Data Science student at PAF-IAST who somehow ended up building Kafka pipelines by day and writing captions by night. Turns out both jobs are the same skill which is taking something complicated and making it make sense.
+      </p>
+      <div class="hero-cta">
+        <a class="btn btn-solid" href="#projects">See the projects</a>
+        <a class="btn btn-ghost" href="mailto:Hajirab954@gmail.com">Say hello</a>
+      </div>
+    </div>
+
+    <div class="compact reveal">
+      <div class="compact-title">field notes</div>
+      <div class="swatches">
+        <div class="swatch"><span class="num">Major</span><span class="lbl">Data Visualization and Analysis</span></div>
+        <div class="swatch"><span class="num">Top 1%</span><span class="lbl">AI SkillBridge fully-funded batch</span></div>
+        <div class="swatch"><span class="num">CNN Academy </span><span class="lbl">got selected in July 2025 for CNN Academy Voices from the South Program</span></div>
+        <div class="swatch"><span class="num">3+ Years Experience</span><span class="lbl">in Content Writing and Social Media Managment</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="about">
+  <div class="eyebrow">about</div>
+  <div class="about-grid">
+    <div class="reveal">
+      <h2 class="serif" style="font-size:2rem; margin-top:0;">A content writer who fell into big data and never left.</h2>
+      <p>I started out writing articles and running Google Business profiles for local clients, then somewhere around sophomore year I got hooked on the moment a messy dataset turns into a dashboard someone can actually use. Now I split my time between pipelines and prose.</p>
+      <p>I'm currently interning on the AI/ML team at D-Tech &amp; Consultancy in Islamabad, and finishing my BS in Data Science at Pak Austria Fachhochschule. </p>
+    </div>
+    <div class="reveal">
+      <div class="edu-card">
+        <div class="school">BS Data Science</div>
+        <div class="meta mono">Pak Austria Fachhochschule (PAF-IAST), Haripur &nbsp;·&nbsp; 2023 – 2027 (expected)</div>
+      </div>
+      <div class="edu-card">
+        <div class="school">Intermediate</div>
+        <div class="meta mono">Tameer-i-Wattan Public School and College, Abbottabad &nbsp;·&nbsp; 935/1100 &nbsp;·&nbsp; 2021 – 2023</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="skills">
+  <div class="eyebrow">skills</div>
+  <h2 class="serif" style="font-size:2rem; margin-top:0; margin-bottom:30px;">The toolkit, organized like my browser tabs actually are.</h2>
+  <div class="skills-grid">
+    <div class="skill-card reveal">
+      <h3>Programming &amp; Analysis</h3>
+      <div class="chips"><span class="chip">Python</span><span class="chip">Pandas</span><span class="chip">NumPy</span><span class="chip">Scikit-learn</span><span class="chip">Matplotlib</span><span class="chip">C++</span><span class="chip">SQL</span></div>
+    </div>
+    <div class="skill-card reveal">
+      <h3>Big Data &amp; Streaming</h3>
+      <div class="chips"><span class="chip">Apache Spark</span><span class="chip">PySpark</span><span class="chip">Kafka</span><span class="chip">Hadoop</span><span class="chip">Hive</span><span class="chip">HDFS</span></div>
+    </div>
+    <div class="skill-card reveal">
+      <h3>Databases &amp; BI</h3>
+      <div class="chips"><span class="chip">MongoDB</span><span class="chip">SQL</span><span class="chip">Power BI</span><span class="chip">Tableau</span></div>
+    </div>
+    <div class="skill-card reveal">
+      <h3>Tools &amp; Platforms</h3>
+      <div class="chips"><span class="chip">Jupyter</span><span class="chip">Anaconda</span><span class="chip">Linux</span><span class="chip">VMs</span><span class="chip">PyCharm</span><span class="chip">Figma</span><span class="chip">Canva</span></div>
+    </div>
+    <div class="skill-card reveal">
+      <h3>Content &amp; Design</h3>
+      <div class="chips"><span class="chip">Content writing</span><span class="chip">Social media strategy</span><span class="chip">Business profile mgmt</span><span class="chip">UI/UX</span></div>
+    </div>
+  </div>
+</section>
+
+<section id="experience">
+  <div class="eyebrow">experience</div>
+  <h2 class="serif" style="font-size:2rem; margin-top:0; margin-bottom:34px;">Where the hours actually went.</h2>
+  <div class="timeline">
+    <div class="t-item reveal">
+      <span class="t-year">2026</span>
+      <p class="t-role">AI/ML Intern</p>
+      <div class="t-org">D-Tech &amp; Consultancy (DTC), Islamabad</div>
+      <p class="t-desc">Working on applied machine learning projects on the DTC team, currently the main thing on my plate.</p>
+    </div>
+    <div class="t-item reveal">
+      <span class="t-year">2026</span>
+      <p class="t-role">Social Media Head</p>
+      <div class="t-org">Google Developers Group, PAF-IAST</div>
+      <p class="t-desc">Managed GDG PAF-IAST's social pages, planned posts, and coordinated with speakers to promote events and share technical content.</p>
+    </div>
+    <div class="t-item reveal">
+      <span class="t-year">2024 – 2025</span>
+      <p class="t-role">Social Media Head</p>
+      <div class="t-org">Zindigi Prize, PAF-IAST</div>
+      <p class="t-desc">Ran the official LinkedIn, Instagram, and Facebook pages, building fun and engaging content for a student audience.</p>
+    </div>
+    <div class="t-item reveal">
+      <span class="t-year">2023 – 2024</span>
+      <p class="t-role">Director, Public Relations</p>
+      <div class="t-org">Business Club, PAF-IAST (BIC)</div>
+      <p class="t-desc">Started as Deputy Director PR, promoted to Director. Managed PR and communications for club events and coordinated with faculty and sponsors.</p>
+    </div>
+    <div class="t-item reveal">
+      <span class="t-year">2023 – 2024</span>
+      <p class="t-role">Content Writer, Part-Time</p>
+      <div class="t-org">Ranking Grow, Haripur</div>
+      <p class="t-desc">Started as a 2-month intern, then stayed on part-time for about a year writing content.</p>
+    </div>
+    <div class="t-item reveal">
+      <span class="t-year">2023</span>
+      <p class="t-role">Content Writing Intern</p>
+      <div class="t-org">Cantrip, Islamabad</div>
+      <p class="t-desc">Managed their Google Business profile and wrote articles for their website over the summer.</p>
+    </div>
+  </div>
+</section>
+
+<section id="projects">
+  <div class="eyebrow">projects</div>
+  <h2 class="serif" style="font-size:2rem; margin-top:0; margin-bottom:30px;">Things I built because I was curious, then kept polishing.</h2>
+  <div class="proj-grid">
+
+    <div class="proj-card featured reveal">
+      <span class="proj-year mono">2026 · personal project</span>
+      <div class="proj-title">Flight Delay <em>Analysis</em></div>
+      <p class="proj-desc">An end-to-end big-data pipeline processing 4.68 million US flight records with Kafka, Spark, MongoDB, HDFS, and Hive. Surfaced delay patterns across airlines, routes, and seasons, then visualized it all in Power BI.</p>
+      <div class="chips"><span class="chip">Kafka</span><span class="chip">Spark</span><span class="chip">MongoDB</span><span class="chip">Hive</span><span class="chip">Power BI</span></div>
+    </div>
+
+    <div class="proj-card reveal">
+      <span class="proj-year mono">2025 · personal project</span>
+      <div class="proj-title">Cyber Security <em>Log Anomaly Detection</em></div>
+      <p class="proj-desc">A real-time anomaly-detection platform for security logs using deep-learning autoencoders and clustering, built to catch unusual patterns in massive log streams with minimal labels.</p>
+      <div class="chips"><span class="chip">Autoencoders</span><span class="chip">Clustering</span><span class="chip">Unsupervised ML</span></div>
+    </div>
+
+    <div class="proj-card reveal">
+      <span class="proj-year mono">2026 · personal project</span>
+      <div class="proj-title">Covid-19 <em>Trends Tracker</em></div>
+      <p class="proj-desc">Three interactive Power BI dashboards and one Tableau dashboard built on a ~7-million-record dataset, tracking cases, deaths, and vaccination rates over time and by region.</p>
+      <div class="chips"><span class="chip">Power BI</span><span class="chip">Tableau</span></div>
+    </div>
+
+    <div class="proj-card reveal">
+      <span class="proj-year mono">2023 – 2024 · capstone</span>
+      <div class="proj-title">Skin Consultant <em>Program</em></div>
+      <p class="proj-desc">A rule-based skin-consultant system built on dermatologist-provided guidelines, started in C++ and migrated to Python. Presented at Uraan'24 and currently being refactored into a mobile app.</p>
+      <div class="chips"><span class="chip">C++</span><span class="chip">Python</span><span class="chip">Rule-based systems</span></div>
+    </div>
+
+    <div class="proj-card reveal">
+      <span class="proj-year mono">2025 · course project</span>
+      <div class="proj-title">Multi-User <em>Blogging Platform</em></div>
+      <p class="proj-desc">Designed the relational database schema and built a simple frontend for a multi-user blogging platform.</p>
+      <div class="chips"><span class="chip">SQL</span><span class="chip">Frontend</span></div>
+    </div>
+
+    <div class="proj-card reveal">
+      <span class="proj-year mono">2024 · learning projects</span>
+      <div class="proj-title">Snake Game &amp; <em>Salary Prediction</em></div>
+      <p class="proj-desc">A classic Snake game built to practice core programming and graphics, plus an employee-salary-prediction model built through EDA, feature engineering, and basic ML.</p>
+      <div class="chips"><span class="chip">Python</span><span class="chip">EDA</span><span class="chip">ML</span></div>
+    </div>
+
+    <div class="proj-card reveal">
+      <span class="proj-year mono">2024 · personal project</span>
+      <div class="proj-title">Automated Backup <em>Tools</em></div>
+      <p class="proj-desc">A Linux backup system built with BorgBackup and cron to automate backups and cut down on manual effort.</p>
+      <div class="chips"><span class="chip">Linux</span><span class="chip">BorgBackup</span><span class="chip">Cron</span></div>
+    </div>
+
+    <div class="proj-card reveal">
+      <span class="proj-year mono">2023 · learning project</span>
+      <div class="proj-title">Online Ticket <em>Reservation System</em></div>
+      <p class="proj-desc">My first major C++ project, built to practice object-oriented programming and basic database-like logic.</p>
+      <div class="chips"><span class="chip">C++</span><span class="chip">OOP</span></div>
+    </div>
+
+  </div>
+</section>
+
+<section id="achievements">
+  <div class="eyebrow">achievements</div>
+  <h2 class="serif" style="font-size:2rem; margin-top:0; margin-bottom:30px;">A few things I'm genuinely proud of.</h2>
+  <div class="ach-grid">
+    <div class="ach-card reveal">
+      <span class="ach-tag">2025 · media</span>
+      <h3>CNN Academy: Voices from the South</h3>
+      <p>Selected for CNN Academy's program from the pool of 10k+ candidates and completed 13 courses.</p>
+    </div>
+    <div class="ach-card reveal">
+      <span class="ach-tag">2025 · fully funded</span>
+      <h3>AI SkillBridge, Top 1%</h3>
+      <p>Selected for the program's first fully funded batch, including a free laptop to support my learning.</p>
+    </div>
+    <div class="ach-card reveal">
+      <span class="ach-tag">school years</span>
+      <h3>Gold Medal &amp; Government Scholarship</h3>
+      <p>Recognized in high school with a gold medal and a government scholarship.</p>
+    </div>
+  </div>
+</section>
+
+<section id="contact">
+  <div class="eyebrow" style="justify-content:center;">contact</div>
+  <h2 class="serif">Let's talk data, content, or both.</h2>
+  <p>Whether it's a project, an internship, or just a good conversation about messy datasets, my inbox is open.</p>
+  <div class="contact-btns">
+    <a class="btn btn-solid" href="mailto:Hajirab954@gmail.com">Hajirab954@gmail.com</a>
+    <a class="btn btn-ghost" href="https://www.linkedin.com/in/hajira-bibi-a59139316" target="_blank" rel="noopener">LinkedIn</a>
+  </div>
+</section>
+
+<footer>
+  Made by Hajira Bibi · Abbottabad, Pakistan · © 2026
+</footer>
+
+<script>
+  const els = document.querySelectorAll('.reveal');
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(e => { if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); } });
+  }, { threshold: 0.15 });
+  els.forEach(el => io.observe(el));
+</script>
+
+</body>
+</html>
