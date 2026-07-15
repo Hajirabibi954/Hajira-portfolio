@@ -241,6 +241,32 @@
   }
 
   a:focus-visible, button:focus-visible{ outline:2px solid var(--wine); outline-offset:3px; }
+
+  .cert-grid{
+  display:grid; grid-template-columns:repeat(3, 1fr); gap:22px;
+}
+.cert-card{
+  background:var(--card); border-radius:var(--radius); padding:16px;
+  border:1px solid var(--line); box-shadow:var(--shadow);
+  text-align:center; transition:transform .25s ease, border-color .25s ease;
+}
+.cert-card:hover{ transform:translateY(-4px); border-color:var(--gold); }
+.cert-frame{
+  border-radius:14px; overflow:hidden; border:1px solid var(--line);
+  background:var(--ivory-2); aspect-ratio:4/3;
+}
+.cert-frame img{
+  width:100%; height:100%; object-fit:cover; display:block;
+}
+.cert-caption{
+  font-family:'IBM Plex Mono'; font-size:0.76rem; color:var(--ink-soft);
+  margin:14px 0 4px;
+}
+
+@media (max-width: 880px){
+  .cert-grid{ grid-template-columns:1fr; }
+}
+  
 </style>
 </head>
 <body>
@@ -478,6 +504,38 @@
   </div>
 </section>
 
+  <section id="certificates">
+  <div class="eyebrow">certificates</div>
+  <h2 class="serif" style="font-size:2rem; margin-top:0; margin-bottom:30px;">Paper proof, for the record.</h2>
+  <div class="cert-grid">
+
+    <div class="cert-card reveal">
+      <div class="cert-frame">
+        <img src="certificates/cert-1.jpg" alt="CNN Academy certificate">
+      </div>
+      <p class="cert-caption">CNN Academy — Voices from the South</p>
+    </div>
+
+    <div class="cert-card reveal">
+      <div class="cert-frame">
+        <img src="certificates/cert-2.jpg" alt="AI SkillBridge certificate">
+      </div>
+      <p class="cert-caption">AI SkillBridge — Fully Funded Batch</p>
+    </div>
+
+    <div class="cert-card reveal">
+      <div class="cert-frame">
+        <img src="certificates/cert-3.jpg" alt="Gold medal certificate">
+      </div>
+      <p class="cert-caption">Gold Medal &amp; Government Scholarship</p>
+    </div>
+
+    <!-- copy a .cert-card block above for each additional certificate -->
+
+  </div>
+</section>
+
+  
 <footer>
   Made by Hajira Bibi · Abbottabad, Pakistan · © 2026
 </footer>
